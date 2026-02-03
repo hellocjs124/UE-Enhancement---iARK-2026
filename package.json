@@ -2,6 +2,6 @@
   "name": "iark-roadmap-app",
   "version": "1.0.0",
   "scripts": {
-    "build": "mkdir -p build && cp index.html index.js build/"
+    "build": "mkdir -p dist && cp index.html index.js dist/"
   }
 }
