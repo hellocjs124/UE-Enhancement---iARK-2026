@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iARK App 2026 Roadmap</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: {
+                            850: '#151f32',
+                            900: '#0f172a',
+                            950: '#020617',
+                        },
+                        brand: {
+                            purple: '#8b5cf6',
+                            blue: '#3b82f6',
+                            green: '#10b981',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Vue.js 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <!-- Icons (Phosphor Icons) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #e2e8f0;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b; 
+        }
+        
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .category-header-ai { border-top: 3px solid #8b5cf6; }
+        .category-header-exp { border-top: 3px solid #3b82f6; }
+        .category-header-cap { border-top: 3px solid #10b981; }
+
+        /* Hide Cloak */
+        [v-cloak] { display: none; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col bg-slate-900 text-slate-200">
+
+    <div id="app" v-cloak class="flex flex-col h-full">
+        
+        <!-- Top Navigation -->
+        <header class="sticky top-0 z-50 glass-panel border-b border-slate-700/50 px-6 py-4 flex justify-between items-center shadow-lg">
+            <div>
+                <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+                    iARK App 体验优化 2026 Roadmap
+                </h1>
+                <p class="text-xs text-slate-400 tracking-wider font-medium mt-1">TECH & BUSINESS ALIGNMENT DASHBOARD</p>
+            </div>
+            <div class="flex gap-3">
+                <input type="file" ref="fileInput" @change="importConfig" class="hidden" accept=".json">
+                <button @click="$refs.fileInput.click()" class="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-md text-sm transition-all hover:text-white text-slate-300">
+                    <i class="ph ph-upload-simple text-lg"></i> 导入配置
+                </button>
+                <button @click="exportConfig" class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-md text-sm font-medium shadow-lg shadow-blue-500/20 transition-all">
+                    <i class="ph ph-download-simple text-lg"></i> 导出配置
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-grow p-6 overflow-x-auto">
+            
+            <!-- Kanban Board -->
+            <div class="grid grid-cols-4 gap-6 min-w-[1200px] mb-16">
+                <!-- Quarter Columns -->
+                <div v-for="(quarter, qKey) in roadmapData" :key="qKey" class="flex flex-col gap-4">
+                    <!-- Column Header -->
+                    <div class="flex items-center justify-center p-3 rounded bg-slate-800/80 border border-slate-700 shadow-sm">
+                        <span class="text-lg font-bold text-white">{{ quarter.title }}</span>
+                    </div>
+
+                    <!-- Categories -->
+                    <div class="flex flex-col gap-4 h-full">
+                        
+                        <!-- AI Native (Purple) -->
+                        <div class="flex flex-col bg-slate-800/40 rounded-lg border border-slate-700/50 category-header-ai min-h-[160px]">
+                            <div class="px-3 py-2 bg-slate-800/80 rounded-t-lg flex justify-between items-center">
+                                <span class="text-xs font-bold text-purple-400 uppercase tracking-wider flex items-center gap-1">
+                                    <i class="ph ph-brain"></i> AI Native
+                                </span>
+                                <span class="text-[10px] bg-purple-500/10 text-purple-300 px-1.5 py-0.5 rounded">{{ quarter.categories.ai.length }}</span>
+                            </div>
+                            <div class="p-2 flex flex-col gap-2 flex-grow">
+                                <div v-for="(item, idx) in quarter.categories.ai" :key="idx" 
+                                     @click="openModal('edit', qKey, 'ai', idx)"
+                                     class="group p-2.5 bg-slate-700/40 hover:bg-slate-700 rounded border border-transparent hover:border-purple-500/30 cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md text-sm text-slate-200 leading-snug relative overflow-hidden">
+                                     {{ item }}
+                                </div>
+                                <button @click="openModal('add', qKey, 'ai')" class="mt-auto w-full py-1.5 border-2 border-dashed border-slate-700 text-slate-500 hover:border-purple-500/50 hover:text-purple-400 rounded text-xs font-bold transition-colors">
+                                    + 添加项目
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Experience (Blue) -->
+                        <div class="flex flex-col bg-slate-800/40 rounded-lg border border-slate-700/50 category-header-exp min-h-[160px]">
+                            <div class="px-3 py-2 bg-slate-800/80 rounded-t-lg flex justify-between items-center">
+                                <span class="text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center gap-1">
+                                    <i class="ph ph-lightning"></i> 体验优化
+                                </span>
+                                <span class="text-[10px] bg-blue-500/10 text-blue-300 px-1.5 py-0.5 rounded">{{ quarter.categories.exp.length }}</span>
+                            </div>
+                            <div class="p-2 flex flex-col gap-2 flex-grow">
+                                <div v-for="(item, idx) in quarter.categories.exp" :key="idx" 
+                                     @click="openModal('edit', qKey, 'exp', idx)"
+                                     class="group p-2.5 bg-slate-700/40 hover:bg-slate-700 rounded border border-transparent hover:border-blue-500/30 cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md text-sm text-slate-200 leading-snug">
+                                     {{ item }}
+                                </div>
+                                <button @click="openModal('add', qKey, 'exp')" class="mt-auto w-full py-1.5 border-2 border-dashed border-slate-700 text-slate-500 hover:border-blue-500/50 hover:text-blue-400 rounded text-xs font-bold transition-colors">
+                                    + 添加项目
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Capability (Green) -->
+                        <div class="flex flex-col bg-slate-800/40 rounded-lg border border-slate-700/50 category-header-cap min-h-[160px]">
+                            <div class="px-3 py-2 bg-slate-800/80 rounded-t-lg flex justify-between items-center">
+                                <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1">
+                                    <i class="ph ph-shield-check"></i> 能力补齐
+                                </span>
+                                <span class="text-[10px] bg-emerald-500/10 text-emerald-300 px-1.5 py-0.5 rounded">{{ quarter.categories.cap.length }}</span>
+                            </div>
+                            <div class="p-2 flex flex-col gap-2 flex-grow">
+                                <div v-for="(item, idx) in quarter.categories.cap" :key="idx" 
+                                     @click="openModal('edit', qKey, 'cap', idx)"
+                                     class="group p-2.5 bg-slate-700/40 hover:bg-slate-700 rounded border border-transparent hover:border-emerald-500/30 cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md text-sm text-slate-200 leading-snug">
+                                     {{ item }}
+                                </div>
+                                <button @click="openModal('add', qKey, 'cap')" class="mt-auto w-full py-1.5 border-2 border-dashed border-slate-700 text-slate-500 hover:border-emerald-500/50 hover:text-emerald-400 rounded text-xs font-bold transition-colors">
+                                    + 添加项目
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gap Analysis Matrix -->
+            <div class="min-w-[1200px] mb-20">
+                <h2 class="text-2xl font-bold mb-6 flex items-center gap-3 text-white">
+                    <i class="ph ph-chart-line-up text-blue-400"></i> 差距分析矩阵 (Gap Analysis)
+                    <span class="text-sm font-normal text-slate-500 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">点击单元格切换状态，点击维度名称可编辑</span>
+                </h2>
+                <div class="overflow-hidden rounded-xl border border-slate-700 shadow-2xl bg-slate-900/50">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="text-sm text-slate-400 uppercase bg-slate-800/90 border-b border-slate-700">
+                            <tr>
+                                <th class="px-8 py-4 font-semibold tracking-wider">核心维度</th>
+                                <th class="px-6 py-4 text-center w-[15%]">Q1</th>
+                                <th class="px-6 py-4 text-center w-[15%]">Q2</th>
+                                <th class="px-6 py-4 text-center w-[15%]">Q3</th>
+                                <th class="px-6 py-4 text-center w-[15%]">Q4</th>
+                                <th class="px-6 py-4 text-center w-[15%] bg-slate-900/50 border-l border-slate-700">竞品标杆</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-700/50 bg-slate-800/20">
+                            <tr v-for="(row, rIdx) in matrixData" :key="rIdx" class="hover:bg-slate-800/60 transition-colors group">
+                                <!-- Editable Row Header -->
+                                <td class="px-8 py-5 font-medium text-slate-200 text-base cursor-pointer hover:text-blue-400 transition-colors relative" @click="openModal('edit-matrix', null, null, rIdx)">
+                                    <div class="flex items-center gap-3">
+                                        {{ row.name }}
+                                        <i class="ph ph-pencil-simple text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                    </div>
+                                </td>
+                                <!-- Status Cells -->
+                                <td class="px-6 py-4 text-center cursor-pointer hover:bg-white/5 transition-colors" @click="cycleStatus(rIdx, 'q1')">
+                                    <span :class="getStatusClass(row.q1)">{{ getStatusLabel(row.q1) }}</span>
+                                </td>
+                                <td class="px-6 py-4 text-center cursor-pointer hover:bg-white/5 transition-colors" @click="cycleStatus(rIdx, 'q2')">
+                                    <span :class="getStatusClass(row.q2)">{{ getStatusLabel(row.q2) }}</span>
+                                </td>
+                                <td class="px-6 py-4 text-center cursor-pointer hover:bg-white/5 transition-colors" @click="cycleStatus(rIdx, 'q3')">
+                                    <span :class="getStatusClass(row.q3)">{{ getStatusLabel(row.q3) }}</span>
+                                </td>
+                                <td class="px-6 py-4 text-center cursor-pointer hover:bg-white/5 transition-colors" @click="cycleStatus(rIdx, 'q4')">
+                                    <span :class="getStatusClass(row.q4)">{{ getStatusLabel(row.q4) }}</span>
+                                </td>
+                                <td class="px-6 py-4 text-center border-l border-slate-700/50 bg-slate-900/30 cursor-pointer hover:bg-white/5" @click="cycleStatus(rIdx, 'benchmark')">
+                                    <span :class="getStatusClass(row.benchmark)">{{ getStatusLabel(row.benchmark) }}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                     <!-- Add Dimension Button -->
+                    <div class="border-t border-slate-700/50 hover:bg-slate-800/50 transition-colors cursor-pointer p-3 text-center" @click="openModal('add-matrix', null, null)">
+                        <span class="text-slate-500 font-medium text-sm flex items-center justify-center gap-2">
+                            <i class="ph ph-plus"></i> 添加新的分析维度
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Edit/Add Modal -->
+        <div v-if="modal.show" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" @click.self="closeModal">
+            <div class="bg-slate-800 border border-slate-600 rounded-xl shadow-2xl w-full max-w-md transform transition-all p-6">
+                <h3 class="text-lg font-semibold text-white mb-4 flex items-center justify-between">
+                    <span v-if="modal.mode.includes('add')">添加新{{ modal.mode.includes('matrix') ? '维度' : '项目' }}</span>
+                    <span v-else>编辑{{ modal.mode.includes('matrix') ? '维度' : '项目' }}</span>
+                    <button @click="closeModal" class="text-slate-400 hover:text-white"><i class="ph ph-x text-xl"></i></button>
+                </h3>
+                
+                <div class="mb-4">
+                    <label class="block text-xs text-slate-400 mb-1 uppercase font-bold">
+                        {{ modal.mode.includes('matrix') ? '维度名称' : '内容描述' }}
+                    </label>
+                    <textarea v-model="modal.text" rows="4" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-slate-200 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 resize-none" :placeholder="modal.mode.includes('matrix') ? '输入维度名称...' : '输入项目内容...'"></textarea>
+                </div>
+
+                <div class="flex justify-between items-center mt-6">
+                    <button v-if="modal.mode.includes('edit')" @click="deleteItem" class="text-red-400 hover:text-red-300 text-sm font-medium px-3 py-2 hover:bg-red-500/10 rounded transition-colors">
+                        <i class="ph ph-trash"></i> 删除
+                    </button>
+                    <div v-else></div> <!-- Spacer -->
+                    
+                    <div class="flex gap-3">
+                        <button @click="closeModal" class="px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm transition-colors">取消</button>
+                        <button @click="saveItem" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold shadow-lg shadow-blue-500/30 transition-colors">保存</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+    <!-- 引入 index.tsx 作为主入口逻辑 -->
+    <script type="module" src="/index.tsx"></script>
+</body>
+</html>
