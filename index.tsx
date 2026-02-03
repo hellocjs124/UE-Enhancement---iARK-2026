@@ -208,53 +208,6 @@ createApp({
              this.matrixData.splice(targetIdx, 1);
           }
           this.closeModal();
-      },
-
-      // Import / Export Logic
-      exportConfig() {
-          const data = {
-              roadmap: this.roadmapData,
-              matrix: this.matrixData,
-              meta: {
-                  version: "1.0",
-                  exportedAt: new Date().toISOString()
-              }
-          };
-          const jsonString = JSON.stringify(data, null, 2);
-          const blob = new Blob([jsonString], { type: "application/json" });
-          const url = URL.createObjectURL(blob);
-          
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `iARK_Roadmap_2026_${new Date().toISOString().slice(0,10)}.json`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-      },
-      importConfig(event: any) {
-          const file = event.target.files[0];
-          if (!file) return;
-
-          const reader = new FileReader();
-          reader.onload = (e: any) => {
-              try {
-                  const json = JSON.parse(e.target.result);
-                  if (json.roadmap && json.matrix) {
-                      this.roadmapData = json.roadmap;
-                      this.matrixData = json.matrix;
-                      alert('配置导入成功！');
-                  } else {
-                      alert('文件格式不正确，缺少 roadmap 或 matrix 数据。');
-                  }
-              } catch (err) {
-                  console.error(err);
-                  alert('解析 JSON 失败，请检查文件是否损坏。');
-              }
-              // Reset input
-              event.target.value = '';
-          };
-          reader.readAsText(file);
       }
   }
 }).mount('#app');

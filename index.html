@@ -77,21 +77,12 @@
     <div id="app" v-cloak class="flex flex-col h-full">
         
         <!-- Top Navigation -->
-        <header class="sticky top-0 z-50 glass-panel border-b border-slate-700/50 px-6 py-4 flex justify-between items-center shadow-lg">
-            <div>
+        <header class="sticky top-0 z-50 glass-panel border-b border-slate-700/50 px-6 py-4 flex justify-center items-center shadow-lg">
+            <div class="text-center">
                 <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
                     iARK App 体验优化 2026 Roadmap
                 </h1>
                 <p class="text-xs text-slate-400 tracking-wider font-medium mt-1">TECH & BUSINESS ALIGNMENT DASHBOARD</p>
-            </div>
-            <div class="flex gap-3">
-                <input type="file" ref="fileInput" @change="importConfig" class="hidden" accept=".json">
-                <button @click="$refs.fileInput.click()" class="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-md text-sm transition-all hover:text-white text-slate-300">
-                    <i class="ph ph-upload-simple text-lg"></i> 导入配置
-                </button>
-                <button @click="exportConfig" class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-md text-sm font-medium shadow-lg shadow-blue-500/20 transition-all">
-                    <i class="ph ph-download-simple text-lg"></i> 导出配置
-                </button>
             </div>
         </header>
 
